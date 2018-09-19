@@ -16,13 +16,9 @@ selection<-c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
 nrep=1
 nSites<-format(100000,scientific = FALSE)
 
-#for (fn in paste("test", 1:100, sep="_")) {
-  
-  #x = readLines(con = "~/discoal/sim1/test.txt")
+for (i in 1:10){
   
   cmd = paste("~/discoal/discoal", sampleSize, nrep, nSites, "-t", theta, "-r", r)
-  
- # x = system("~/discoal/discoal 10 1 100000 -t 60 -r 40", intern = TRUE)
   
   sim=system(cmd, intern=TRUE)
 
@@ -39,8 +35,10 @@ nSites<-format(100000,scientific = FALSE)
   
   #image(haplo_padded)
   
-  write.matrix(t(haplo_padded), file =  "~/work/PPR3/data/neutral/test.txt")
+  file_name=paste("~/work/PPR3/data/neutral/sim", i, ".txt")
   
-#}
+  write.matrix(t(haplo_padded), file =file_name)
+  
+}
 
 #save(), and load() to make it into R object
