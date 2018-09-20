@@ -12,6 +12,13 @@ r=4*Ne*recomb_rate*nSites
 sampleSize=50
 anc_samples=10
 selection<-c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
+alpha<-c()
+
+for(i in seq_along(selection)){
+#  print(selection[i])
+  alpha<-c(alpha, 2*Ne*selection[i])
+}
+
 nrep=1
 nSites<-format(nSites, scientific = FALSE)
 
@@ -32,8 +39,11 @@ for (i in 1:num_sim){
   #   print(i) 
   #   Sys.time()
   # }
+  selection_start=runif(1,min=0,max=0.2)
   
-  cmd = paste("~/discoal/discoal", sampleSize, nrep, nSites, "-t", theta, "-r", r, "-A", anc_samples, 0 , 0.05, "-A", anc_samples, 0 , 0.1, "-A", anc_samples, 0 , 0.15, "-A", anc_samples, 0 , 0.20)
+  cmd = paste("~/discoal/discoal", sampleSize, nrep, nSites, "-t", theta, "-r", r, "-A",+
+                anc_samples, 0 , 0.05, "-A", anc_samples, 0 , 0.1, "-A", anc_samples, 0 , 0.15, "-A", anc_samples, 0 , 0.20,
+                "-ws", selection_start, "-x", 0.5 , "-a", alpha[1] )
   
   while(TRUE) {
     sim=system(cmd, intern=TRUE)
@@ -44,10 +54,6 @@ for (i in 1:num_sim){
   }
   
   segsites_vec = c(segsites_vec,segsites)  
-  
-  if (segsites == 0) {
-    next
-  }
   
   start <- which(substr(sim, 1,3) == "pos") + 1  # Searching for the line with "position" at the beginning
   end = length(sim)
@@ -94,7 +100,7 @@ haplo_list
 haplo_padded
 image(haplo_padded[[2]])
 
-dim(haplo_padded[[1]])
+dim(haplo_list[[1]])
 dim(haplo_padded[[1]])
 max(segsites_vec)
 
