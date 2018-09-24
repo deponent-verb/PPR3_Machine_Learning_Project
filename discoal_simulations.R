@@ -19,7 +19,6 @@ for(i in seq_along(selection)){
   alpha<-c(alpha, 2*Ne*selection[i])
 }
 
-s_coeff=2
 nrep=1
 nSites<-format(nSites, scientific = FALSE)
 
@@ -27,10 +26,11 @@ nSites<-format(nSites, scientific = FALSE)
 
 #initialization for function, make sure you clean these on each run
 
+s_coeff=1
 haplo_list=list()
 segsites_vec=c()
 haplo_padded=list()
-num_sim=10
+num_sim=10000
 
 #running simulations
 
