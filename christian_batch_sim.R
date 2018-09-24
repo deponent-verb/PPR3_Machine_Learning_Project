@@ -1,7 +1,7 @@
 library(phonTools)
 library(MASS)
 library(parallel)
-setwd("~/discoal/")
+setwd("~/work/Adelaide/AncientSelection_Anthony/runSims/")
 
 #set up discoal parameters
 mu=1.5e-8
@@ -16,7 +16,7 @@ selection<-c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
 alpha<-c()
 
 for(i in seq_along(selection)){
-#  print(selection[i])
+  #  print(selection[i])
   alpha<-c(alpha, 2*Ne*selection[i])
 }
 
@@ -26,16 +26,16 @@ nSites<-format(nSites, scientific = FALSE)
 ######simulation code starts here!
 
 discoal_sim <- function (s_coeff,num_sim){
-
-    start.time <- Sys.time()
   
-    haplo_list = mclapply(1:num_sim, function(k){
+  start.time <- Sys.time()
+  
+  haplo_list = lapply(1:num_sim, function(k){
     
     selection_start=runif(1,min=0,max=0.2)
     
-    cmd = paste("~/discoal/discoal", sampleSize, nrep, nSites, "-t", theta, "-r", r, "-A",+
+    cmd = paste("~/myBins/discoal/discoal", sampleSize, nrep, nSites, "-t", theta, "-r", r, "-A",+
                   anc_samples, 0 , 0.05, "-A", anc_samples, 0 , 0.1, "-A", anc_samples, 0 , 0.15, "-A", anc_samples, 0 , 0.20,
-                  "-ws", selection_start, "-x", 0.5 , "-a", s_coeff )
+                "-ws", selection_start, "-x", 0.5 , "-a", s_coeff )
     
     while(TRUE) {
       sim=system(cmd, intern=TRUE)
@@ -49,60 +49,40 @@ discoal_sim <- function (s_coeff,num_sim){
     end = length(sim)
     
     return(sapply(sim[start:end], function(s) {as.numeric(strsplit(s, split="")[[1]])}, USE.NAMES = F))
-  }, mc.cores = 8)
-  
-  segsites_vec = sapply(haplo_list, function(x) {dim(x)[1]})
-  
-  #padding
-  
-  num_pad_total=max(segsites_vec)
-  for (i in 1:num_sim){
-    if (segsites_vec[i] == 0) {
-      next
-    }
-    if (segsites_vec[i] == 1) {
-      haplo_list[[i]] = t(as.matrix(haplo_list[[i]]))
-    }
-    num_pad = num_pad_total - segsites_vec[i]
-    haplo_padded[[i]] = rbind(haplo_list[[i]], zeros(x=num_pad, y=ncol(haplo_list[[i]])))
-  }
-  
-  segsites_vec<-c()
-  haplo_list<-list()
+  })
   
   #save as R object
   s=s_coeff/(2*Ne)
-  object_name=paste("./discoal_sim_s=", s,".R")
-  save(haplo_padded,file=object_name)
+  object_name=paste0("./discoal_sim_s=", s,".Rdata")
+  save(haplo_list,file=object_name)
   
-  haplo_padded<-list()
 }
 
 #Running simulations
 
-for(i in 1:length(alpha)){
+mclapply(1:length(alpha), function(i) {
   start.time<-Sys.time()
-  discoal_sim(s_coeff = alpha[i],num_sim = 10000)
+  discoal_sim(s_coeff = alpha[i],num_sim = 10)
   end.time<-Sys.time()
   total.time<-end.time-start.time
   progress=paste("Completed sim ", i , " in ", total.time)
   print(progress)
-}
+}, mc.cores=8)
 
-discoal_sim(s_coeff = 0,num_sim = 10)
+#discoal_sim(s_coeff = 0,num_sim = 10)
 
 #for checking functions
 
 
-dim(haplo_list[[1]])
-dim(haplo_padded[[1]])
-max(segsites_vec)
-
-segsites_vec
-haplo_list
-haplo_padded
-
-image(haplo_padded[[2]])
+# dim(haplo_list[[1]])
+# dim(haplo_padded[[1]])
+# max(segsites_vec)
+# 
+# segsites_vec
+# haplo_list
+# haplo_padded
+# 
+# image(haplo_padded[[2]])
 
 #writing the files out
 # for (i in 1:num_sim){
@@ -116,6 +96,3 @@ image(haplo_padded[[2]])
 
 #x<-c(1,1,1)
 #save(x,file="~/work/PPR3/data/neutral/neutral_object.R")
-
-
-
