@@ -1,5 +1,6 @@
 library(phonTools)
 library(MASS)
+library(parallel)
 setwd("~/discoal/")
 
 #set up discoal parameters
@@ -26,25 +27,23 @@ nSites<-format(nSites, scientific = FALSE)
 
 #initialization for function, make sure you clean these on each run
 
-s_coeff=1
+s_coeff=2
 haplo_list=list()
 segsites_vec=c()
 haplo_padded=list()
-num_sim=10000
+num_sim=10
 
 #running simulations
 
-for (i in 1:num_sim){
+start.time <- Sys.time()
+
+haplo_list = mclapply(1:num_sim, function(i){
   
-  # if (i%%1000 == 0) {
-  #   print(i) 
-  #   Sys.time()
-  # }
   selection_start=runif(1,min=0,max=0.2)
   
   cmd = paste("~/discoal/discoal", sampleSize, nrep, nSites, "-t", theta, "-r", r, "-A",+
                 anc_samples, 0 , 0.05, "-A", anc_samples, 0 , 0.1, "-A", anc_samples, 0 , 0.15, "-A", anc_samples, 0 , 0.20,
-                "-ws", selection_start, "-x", 0.5 , "-a", alpha[selec] )
+                "-ws", selection_start, "-x", 0.5 , "-a", alpha[s_coeff] )
   
   while(TRUE) {
     sim=system(cmd, intern=TRUE)
@@ -54,14 +53,17 @@ for (i in 1:num_sim){
     }
   }
   
-  segsites_vec = c(segsites_vec,segsites)  
-  
   start <- which(substr(sim, 1,3) == "pos") + 1  # Searching for the line with "position" at the beginning
   end = length(sim)
   
-  
-  haplo_list[[i]] = sapply(sim[start:end], function(s) {as.numeric(strsplit(s, split="")[[1]])}, USE.NAMES = F)
-}
+  return(sapply(sim[start:end], function(s) {as.numeric(strsplit(s, split="")[[1]])}, USE.NAMES = F))
+}, mc.cores = 4)
+
+end.time <- Sys.time()
+time.taken <- end.time - start.time
+time.taken
+
+segsites_vec = sapply(haplo_list, function(x) {dim(x)[1]})
 
 #padding
 
@@ -83,29 +85,31 @@ object_name=paste("~/work/PPR3/data/discoal_sim_s=", selection[s_coeff],".R")
 save(haplo_padded,file=object_name)
 
 
+#for checking functions
+
+
+dim(haplo_list[[1]])
+dim(haplo_padded[[1]])
+max(segsites_vec)
+
+segsites_vec
+haplo_list
+haplo_padded
+
+image(haplo_padded[[2]])
+
 #writing the files out
-for (i in 1:num_sim){
-  if (segsites_vec[i] == 0) {
-    next
-  }
-  file_name=paste("~/work/PPR3/data/neutral/sim", i, ".txt")
-  write.matrix(t(haplo_padded), file =file_name)
-}
+# for (i in 1:num_sim){
+#   if (segsites_vec[i] == 0) {
+#     next
+#   }
+#   file_name=paste("~/work/PPR3/data/neutral/sim", i, ".txt")
+#   write.matrix(t(haplo_padded), file =file_name)
+# }
 
 
 #x<-c(1,1,1)
 #save(x,file="~/work/PPR3/data/neutral/neutral_object.R")
 
 
-#for checking functions
-segsites_vec
-haplo_list
-haplo_padded
-image(haplo_padded[[2]])
 
-dim(haplo_list[[1]])
-dim(haplo_padded[[1]])
-max(segsites_vec)
-
-
-#save(), and load() to make it into R object
