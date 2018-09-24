@@ -19,6 +19,7 @@ for(i in seq_along(selection)){
   alpha<-c(alpha, 2*Ne*selection[i])
 }
 
+s_coeff=2
 nrep=1
 nSites<-format(nSites, scientific = FALSE)
 
@@ -43,7 +44,7 @@ for (i in 1:num_sim){
   
   cmd = paste("~/discoal/discoal", sampleSize, nrep, nSites, "-t", theta, "-r", r, "-A",+
                 anc_samples, 0 , 0.05, "-A", anc_samples, 0 , 0.1, "-A", anc_samples, 0 , 0.15, "-A", anc_samples, 0 , 0.20,
-                "-ws", selection_start, "-x", 0.5 , "-a", alpha[1] )
+                "-ws", selection_start, "-x", 0.5 , "-a", alpha[selec] )
   
   while(TRUE) {
     sim=system(cmd, intern=TRUE)
@@ -78,7 +79,9 @@ for (i in 1:num_sim){
 
 #save as R object
 
-save(haplo_padded,file="~/work/PPR3/data/neutral/neutral_object.R")
+object_name=paste("~/work/PPR3/data/discoal_sim_s=", selection[s_coeff],".R")
+save(haplo_padded,file=object_name)
+
 
 #writing the files out
 for (i in 1:num_sim){
