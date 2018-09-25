@@ -42,6 +42,14 @@ for( s in 1:length(haplo_list_full[][])){
   }
 }
 
+#saving object
+
+save(haplo_padded,file="~/work/PPR3/processed_data/padded_haplotypes.Rdata")
+
+#diagnosis
+
+haplo_list_full<-list()
+
 dim(haplo_padded[[1]][[1]])
 dim(haplo_list_full[[1]][[1]])
 
