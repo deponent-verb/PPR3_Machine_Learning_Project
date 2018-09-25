@@ -31,11 +31,18 @@ haplo_padded=list()
 
 for( s in 1:length(haplo_list_full[][])){
   for( i in 1:length(haplo_list_full[[s]][])){
-  haplo_padded[[s]][[i]]=rbind(haplo_list_full[[s]][[i]], zeros(x=pad_total,y=ncol(haplo_list_full[[s]][[i]])))
+    x<-dim(haplo_list_full[[s]][[i]])
+    if(x[1]<pad_total){
+      num_pad=pad_total-x[1]
+      haplo_padded[[s]][[i]]=rbind(haplo_list_full[[s]][[i]], zeros(x=num_pad,y=ncol(haplo_list_full[[s]][[i]])))
+      print(s)
+      print(i)
+    }
   }
 }
 
-haplo_list_full[[1]][[999]]
+dim(haplo_padded[[1]][[1]])
+dim(haplo_list_full[[1]][[1]])
 
 
 #    haplo_padded[[i]] = rbind(haplo_list[[i]], zeros(x=num_pad, y=ncol(haplo_list[[i]])))
