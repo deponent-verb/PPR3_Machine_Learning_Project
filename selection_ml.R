@@ -30,6 +30,7 @@ for( s in 1:length(haplo_list_full[][])){
 haplo_padded=list()
 
 for( s in 1:length(haplo_list_full[][])){
+  haplo_padded[[s]] = list()
   for( i in 1:length(haplo_list_full[[s]][])){
     x<-dim(haplo_list_full[[s]][[i]])
     if(x[1]<pad_total){
