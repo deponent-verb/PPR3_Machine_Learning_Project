@@ -1,31 +1,25 @@
 library(keras)
+library(rlist)
 
 load(file="~/work/PPR3/processed_data/padded_haplotypes.Rdata")
+s<-c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
 
-#partitioning data
+# Make s vector
 
-data<-list()
-data["samples"]<-list()
-data["labels"]<-list()
+s_vec = rep(s, sapply(haplo_padded, length))
+haplo_padded_flat = unlist(haplo_padded, recursive = F)
 
-##getting the neutral data and labelling
+data=list()
+data$samples=haplo_padded_flat
+data$labels=s_vec
 
-  for (i in 1:length(haplo_padded[[1]])){
-    data[["samples"]][[i]]<-haplo_padded[[1]][[i]]
-    data[["labels"]][[i]]<-0
-  }
 
-##getting s=0.5 data
+#haplo_padded_flat[s_vec==0]
+#data[["samples"]]<-sapply(haplo_padded[1:2], identity)
 
-push<-length(haplo_padded[[1]])
-for (i in push+1:push+push+length(haplo_padded[[9]])){
-  data[["samples"]][[i]]<-haplo_padded[[1]][[i]]
-  data[["labels"]][[i]]<-0
-}
+#str(haplo_padded[[1]])  list of 1000
 
-for(s in c(1,9)){
-  print(s)
-}
+
 
 
 #processing data into train + test
