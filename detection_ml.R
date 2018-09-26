@@ -31,29 +31,51 @@ test_size=300
 train<-list()
 for(i in 1:train_size){
   train$samples[i]<-small_data$sample[ID[i]] 
-  train$label[i]<-small_data$labels[ID[i]] 
+  train$labels[i]<-small_data$labels[ID[i]] 
 }
 
 test<-list()
 for(i in 1:test_size){
   test$samples[i]<-small_data$sample[ID[i+train_size]] 
-  test$label[i]<-small_data$labels[ID[i+train_size]] 
+  test$labels[i]<-small_data$labels[ID[i+train_size]] 
 }
-
-
-train<-list()
-train["samples"]<-list()
-train["labels"]<-list()
-
-test<-list()
-test["samples"]<-list()
-test["labels"]<-list()
 
 #neural network starts here
 
+train_samples<-train$samples
+train_labels<-train$labels
+test_samples<-test$samples
+test_labels<-test$labels
 
 
+network <- keras_model_sequential() %>%
+  layer_dense(units = 512, activation = "relu", input_shape = c(1212 *50)) %>%
+  layer_dense(units = 2, activation = "softmax")
 
+network %>% compile(
+  optimizer = "rmsprop",
+  loss = "categorical_crossentropy",
+  metrics = c("accuracy")
+)
+
+train_labels <- to_categorical(train_labels)
+test_labels <- to_categorical(test_labels)
+
+train_samples <- array_reshape(train_samples, c(1700, 1212 *50))
+train_samples <- train_samples / 1.0
+test_samples <- array_reshape(test_samples, c(300, 1212 *50))
+test_samples <- test_samples / 1.0
+
+#learning
+
+network %>% fit(train_samples, train_labels, epochs = 40, batch_size = 128)
+
+#testing
+
+metrics <- network %>% evaluate(test_samples, test_labels)
+metrics
+
+type_of(train_labels[1])
 
 #haplo_padded_flat[s_vec==0]
 #data[["samples"]]<-sapply(haplo_padded[1:2], identity)
