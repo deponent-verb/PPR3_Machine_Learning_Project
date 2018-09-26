@@ -19,6 +19,7 @@ small_data=list()
 small_data$samples=list(haplo_padded_flat[1:1000],haplo_padded_flat[8001:9000])
 small_data$samples=unlist(small_data$samples, recursive = F)
 small_data$labels=append(rep(0,1000),rep(1,1000))
+save(small_data,file="~/work/PPR3/processed_data/small_data.Rdata")
 
 #shuffle the data
 ID=sample(length(small_data$labels),length(small_data$labels))
@@ -40,6 +41,14 @@ for(i in 1:test_size){
   test$labels[i]<-small_data$labels[ID[i+train_size]] 
 }
 
+# look at genotype matrices
+
+par(mfrow=c(4,8))
+par(mar=c(0,0,0,0))
+for (i in 1:16) {
+  image(haplo_padded_flat[s_vec==0][[1+i]], col=c("white", "black"))
+  image(haplo_padded_flat[s_vec==0.5][[1+i]], col=c("white", "black"))
+}
 #neural network starts here
 
 train_samples<-train$samples
