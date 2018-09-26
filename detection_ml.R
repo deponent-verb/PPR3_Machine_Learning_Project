@@ -13,16 +13,33 @@ data=list()
 data$samples=haplo_padded_flat
 data$labels=s_vec
 
+#picking only s=0, s=0.5
 
-#haplo_padded_flat[s_vec==0]
-#data[["samples"]]<-sapply(haplo_padded[1:2], identity)
+small_data=list()
+small_data$samples=list(haplo_padded_flat[1:1000],haplo_padded_flat[8001:9000])
+small_data$samples=unlist(small_data$samples, recursive = F)
+small_data$labels=append(rep(0,1000),rep(1,1000))
 
-#str(haplo_padded[[1]])  list of 1000
+#shuffle the data
+ID=sample(length(small_data$labels),length(small_data$labels))
 
+#putting into training and testing sets
 
+train_size=1700
+test_size=300
 
+train<-list()
+for(i in 1:train_size){
+  train$samples[i]<-small_data$sample[ID[i]] 
+  train$label[i]<-small_data$labels[ID[i]] 
+}
 
-#processing data into train + test
+test<-list()
+for(i in 1:test_size){
+  test$samples[i]<-small_data$sample[ID[i+train_size]] 
+  test$label[i]<-small_data$labels[ID[i+train_size]] 
+}
+
 
 train<-list()
 train["samples"]<-list()
@@ -32,17 +49,21 @@ test<-list()
 test["samples"]<-list()
 test["labels"]<-list()
 
-genome<-list(train,test)
+#neural network starts here
 
 
 
-genome["train"]<-list()
-genome["train"]["samples"]<-list()
 
-genome["test"]<-list() 
 
-train_size=700
-test_size=300
+#haplo_padded_flat[s_vec==0]
+#data[["samples"]]<-sapply(haplo_padded[1:2], identity)
+
+#str(haplo_padded[[1]])  list of 1000
+
+
+
+
+
 
 
 
