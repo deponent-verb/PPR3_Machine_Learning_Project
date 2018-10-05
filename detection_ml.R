@@ -21,6 +21,8 @@ small_data$samples=unlist(small_data$samples, recursive = F)
 small_data$labels=append(rep(0,1000),rep(1,1000))
 save(small_data,file="~/work/PPR3/processed_data/small_data.Rdata")
 
+load(file = "~/work/PPR3/processed_data/small_data.Rdata")
+
 #shuffle the data
 ID=sample(length(small_data$labels),length(small_data$labels))
 
@@ -59,11 +61,11 @@ test_labels<-test$labels
 
 network <- keras_model_sequential() %>%
   layer_dense(units = 512, activation = "relu", input_shape = c(1212 *50)) %>%
-  layer_dense(units = 2, activation = "softmax")
+  layer_dense(units = 2, activation = "sigmoid")
 
 network %>% compile(
-  optimizer = "rmsprop",
-  loss = "categorical_crossentropy",
+  optimizer = optimizer_rmsprop(lr = 1e-4),
+  loss = "binary_crossentropy",
   metrics = c("accuracy")
 )
 
@@ -77,7 +79,7 @@ test_samples <- test_samples / 1.0
 
 #learning
 
-network %>% fit(train_samples, train_labels, epochs = 40, batch_size = 128)
+network %>% fit(train_samples, train_labels, epochs = 10, batch_size = 128)
 
 #testing
 
