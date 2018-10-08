@@ -12,7 +12,8 @@ theta=4*Ne*mu*nSites
 r=4*Ne*recomb_rate*nSites
 sampleSize=50
 anc_samples=10
-selection<-c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
+#selection<-c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
+selection<-c(0,0.001,0.01,0.1)
 alpha<-c()
 
 for(i in seq_along(selection)){
@@ -26,12 +27,11 @@ nSites<-format(nSites, scientific = FALSE)
 ######simulation code starts here!
 
 discoal_sim <- function (s_coeff,num_sim){
-
-    start.time <- Sys.time()
   
     haplo_list = mclapply(1:num_sim, function(k){
     
     selection_start=runif(1,min=0,max=0.2)
+    #selection_start=0.2
     
     cmd = paste("~/discoal/discoal", sampleSize, nrep, nSites, "-t", theta, "-r", r, "-A",+
                   anc_samples, 0 , 0.05, "-A", anc_samples, 0 , 0.1, "-A", anc_samples, 0 , 0.15, "-A", anc_samples, 0 , 0.20,
@@ -49,47 +49,27 @@ discoal_sim <- function (s_coeff,num_sim){
     end = length(sim)
     
     return(sapply(sim[start:end], function(s) {as.numeric(strsplit(s, split="")[[1]])}, USE.NAMES = F))
-  }, mc.cores = 4)
+  })
   
-  segsites_vec = sapply(haplo_list, function(x) {dim(x)[1]})
+ #save as R object
+s=s_coeff/(2*Ne)
+object_name=paste0("~/work/PPR3/raw_data/discoal_sim_s=", s,".Rdata")
+save(haplo_list,file=object_name)
   
-  #padding
-  
-  num_pad_total=max(segsites_vec)
-  for (i in 1:num_sim){
-    if (segsites_vec[i] == 0) {
-      next
-    }
-    if (segsites_vec[i] == 1) {
-      haplo_list[[i]] = t(as.matrix(haplo_list[[i]]))
-    }
-    num_pad = num_pad_total - segsites_vec[i]
-    haplo_padded[[i]] = rbind(haplo_list[[i]], zeros(x=num_pad, y=ncol(haplo_list[[i]])))
-  }
-  
-  segsites_vec<-c()
-  haplo_list<-list()
-  
-  #save as R object
-  
-  object_name=paste("~/work/PPR3/data/discoal_sim_s=", s_coeff,".R")
-  save(haplo_padded,file=object_name)
-  
-  haplo_padded<-list()
 }
 
 #Running simulations
 
-for(i in 1:length(alpha)){
+mclapply(1:length(alpha), function(i){
   start.time<-Sys.time()
-  discoal_sim(s_coeff = alpha[i],num_sim = 100)
+  discoal_sim(s_coeff = alpha[i],num_sim = 1000)
   end.time<-Sys.time()
   total.time<-end.time-start.time
   progress=paste("Completed sim ", i , " in ", total.time)
   print(progress)
-}
+}, mc.cores=4)
 
-discoal_sim(s_coeff = 0,num_sim = 10)
+
 
 #for checking functions
 
