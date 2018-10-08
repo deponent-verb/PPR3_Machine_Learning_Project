@@ -1,5 +1,22 @@
 #turning matrices into images
 
+load(file="~/work/PPR3/data/neutral.Rdata")
+
+
+for(i in 1000){
+  m<-haplo_padded[[i]]
+  name=paste("~/work/PPR3/processed_data/images/neutral",i,".JPEG",sep="")
+  writeJPEG(m,name)
+}
+
+load(file="~/work/PPR3/data/selection.Rdata")
+
+for(i in 1000){
+  m<-haplo_padded[[i]]
+  name=paste("~/work/PPR3/processed_data/images/selection",i,".JPEG",sep="")
+  writeJPEG(m,name)
+}
+
 load(file = "~/work/PPR3/processed_data/small_data.Rdata")
 library(jpeg)
 sim_size=1000
