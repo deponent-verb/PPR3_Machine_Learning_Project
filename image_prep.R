@@ -1,21 +1,46 @@
+library(jpeg)
+
 #turning matrices into images
 
-load(file="~/work/PPR3/data/neutral.Rdata")
+setwd("~/work/Adelaide/AncientSelection_Anthony/testing_CNN/")
 
+load(file="discoal_sim_s=0.Rdata")
 
-for(i in 1000){
-  m<-haplo_padded[[i]]
-  name=paste("~/work/PPR3/processed_data/images/neutral",i,".JPEG",sep="")
-  writeJPEG(m,name)
+for(i in 1:length(haplo_list)){
+  m<-haplo_list[[i]]
+  if (i<=100) {
+    name=paste("./images/test/neutral/neutral",i,".JPEG",sep="")
+  } else {
+    if (i>100 & i<=200){
+      name=paste("./images/validation/neutral/neutral",i,".JPEG",sep="")
+    } else {
+      name=paste("./images/train/neutral/neutral",i,".JPEG",sep="")
+    }
+  }
+  writeJPEG(m,name, quality=1)
 }
 
-load(file="~/work/PPR3/data/selection.Rdata")
+load(file="discoal_sim_s=0.01.Rdata")
 
-for(i in 1000){
-  m<-haplo_padded[[i]]
-  name=paste("~/work/PPR3/processed_data/images/selection",i,".JPEG",sep="")
-  writeJPEG(m,name)
+for(i in 1:length(haplo_list)){
+  m<-haplo_list[[i]]
+  if (i<=100) {
+    name=paste("./images/test/selected/selected",i,".JPEG",sep="")
+  } else {
+    if (i>100 & i<=200){
+      name=paste("./images/validation/selected/selected",i,".JPEG",sep="")
+    } else {
+      name=paste("./images/train/selected/selected",i,".JPEG",sep="")
+    }
+  }
+
+  writeJPEG(m,name, quality=1)
 }
+
+####STOP HERE
+
+
+
 
 load(file = "~/work/PPR3/processed_data/small_data.Rdata")
 library(jpeg)

@@ -2,7 +2,7 @@ library(keras)
 
 model <- keras_model_sequential() %>%
   layer_conv_2d(filters = 32, kernel_size = c(3, 3), activation = "relu",
-                input_shape = c(1212, 50, 1)) %>%
+                input_shape = c(150, 50, 1)) %>%
   layer_max_pooling_2d(pool_size = c(2, 2)) %>%
   layer_conv_2d(filters = 64, kernel_size = c(3, 3), activation = "relu") %>% layer_max_pooling_2d(pool_size = c(2, 2)) %>%
   layer_conv_2d(filters = 128, kernel_size = c(3, 3), activation = "relu") %>% layer_max_pooling_2d(pool_size = c(2, 2)) %>%
@@ -19,22 +19,27 @@ model %>% compile(
 
 #setting up directories
 
-base_dir<- "~/work/PPR3/processed_data/images"
+base_dir<- "./images/"
 train_dir<-file.path(base_dir,"train")
 validation_dir<-file.path(base_dir,"validation")
 test_dir<-file.path(base_dir,"test")
 
+test_datagen = image_data_generator(rescale=1/255)
+validation_datagen = image_data_generator(rescale=1/255)
+
 train_generator <- flow_images_from_directory(
+  generator = test_datagen,
   directory = train_dir,
-  target_size = c(1212, 50),
+  target_size = c(150, 50),
   color_mode = "grayscale",
   batch_size = 20,
   class_mode = "binary"
 )
 
 validation_generator <- flow_images_from_directory(
+  generator = validation_datagen,
   directory=validation_dir,
-  target_size = c(1212, 50),
+  target_size = c(150, 50),
   color_mode = "grayscale",
   batch_size = 20,
   class_mode = "binary"

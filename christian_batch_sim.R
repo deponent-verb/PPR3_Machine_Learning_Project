@@ -1,7 +1,7 @@
 library(phonTools)
 library(MASS)
 library(parallel)
-setwd("~/work/Adelaide/AncientSelection_Anthony/runSims/")
+setwd("~/work/Adelaide/AncientSelection_Anthony/testing_CNN/")
 
 #set up discoal parameters
 mu=1.5e-8
@@ -12,7 +12,9 @@ theta=4*Ne*mu*nSites
 r=4*Ne*recomb_rate*nSites
 sampleSize=50
 anc_samples=10
-selection<-c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
+#selection<-c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
+selection<-c(0,0.001,0.01,0.1)
+
 alpha<-c()
 
 for(i in seq_along(selection)){
@@ -32,6 +34,7 @@ discoal_sim <- function (s_coeff,num_sim){
   haplo_list = lapply(1:num_sim, function(k){
     
     selection_start=runif(1,min=0,max=0.2)
+    #selection_start = 0.2
     
     cmd = paste("~/myBins/discoal/discoal", sampleSize, nrep, nSites, "-t", theta, "-r", r, "-A",+
                   anc_samples, 0 , 0.05, "-A", anc_samples, 0 , 0.1, "-A", anc_samples, 0 , 0.15, "-A", anc_samples, 0 , 0.20,
@@ -62,7 +65,7 @@ discoal_sim <- function (s_coeff,num_sim){
 
 mclapply(1:length(alpha), function(i) {
   start.time<-Sys.time()
-  discoal_sim(s_coeff = alpha[i],num_sim = 10)
+  discoal_sim(s_coeff = alpha[i],num_sim = 1000)
   end.time<-Sys.time()
   total.time<-end.time-start.time
   progress=paste("Completed sim ", i , " in ", total.time)
