@@ -19,7 +19,7 @@ model %>% compile(
 
 #setting up directories
 
-base_dir<- "./images/"
+base_dir<- "~/work/PPR3/processed_data/images/"
 train_dir<-file.path(base_dir,"train")
 validation_dir<-file.path(base_dir,"validation")
 test_dir<-file.path(base_dir,"test")
