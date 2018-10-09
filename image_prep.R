@@ -51,6 +51,77 @@ for(i in 1:length(selection)){
   make_image(selection[i])
 }
 
+##Binary Case
+
+base_dir<-"~/work/PPR3/processed_data/binary_images"
+train_dir<-file.path(base_dir,"train")
+validation_dir<-file.path(base_dir,"validation")
+test_dir<-file.path(base_dir,"test")
+
+dir.create(base_dir)
+dir.create(train_dir)
+dir.create(validation_dir)
+dir.create(test_dir)
+
+new_train<-paste0(train_dir,"selection")
+
+bin_dir_set<-function (string){
+  new_train<-paste0(train_dir,"/",string)
+  new_valid<-paste0(validation_dir,"/",string)
+  new_test<-paste0(test_dir,"/",string)
+  
+  dir.create(new_train)
+  dir.create(new_valid)
+  dir.create(new_test)  
+}
+
+bin_dir_set("selection")
+bin_dir_set("neutral")
+
+test_size=1000
+validation_size=1000
+
+
+
+bin_make_selection_image<-function(){
+  base_name=paste0("~/work/PPR3/processed_data/binary_images/")
+  load(file="~/work/PPR3/raw_data/binary/selection.Rdata")
+    for(i in 1:length(haplo_list)){
+      m<-haplo_list[[i]]
+      if (i<=test_size) {
+        name=paste0(base_name,"test/selection/s_",i,".JPEG")
+      } else if (i<=test_size+validation_size){
+        name=paste0(base_name,"validation/selection/s_",i,".JPEG")
+      } else 
+        name=paste0(base_name,"train/selection/s_",i,".JPEG")
+        writeJPEG(m,name, quality=1)
+  }
+}
+
+bin_make_neutral_image<-function() {
+  load(file="~/work/PPR3/raw_data/binary/neutral.Rdata")
+  for(i in 1:length(haplo_list)){
+    m<-haplo_list[[i]]
+    if (i<=test_size) {
+      name=paste0(base_name,"test/neutral/neutral_",i,".JPEG")
+    } else if (i<=test_size+validation_size){
+      name=paste0(base_name,"validation/neutral/neutral_",i,".JPEG")
+    } else 
+    name=paste0(base_name,"train/neutral/neutral_",i,".JPEG")
+    writeJPEG(m,name, quality=1)
+  }
+}
+
+
+bin_make_selection_image()
+bin_make_neutral_image()
+
+
+
+
+
+###IGNORE FROM HENCEFORTH
+
 make_image(0)
 
 test_size=3

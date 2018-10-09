@@ -15,6 +15,7 @@ anc_samples=10
 #selection<-c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
 selection<-c(0,0.001,0.01,0.1)
 alpha<-c()
+selection<-10^seq(-2,-4,2)
 
 for(i in seq_along(selection)){
 #  print(selection[i])
@@ -69,6 +70,8 @@ mclapply(1:length(alpha), function(i){
   print(progress)
 }, mc.cores=4)
 
+
+discoal_sim(s_coeff = 0,num_sim=10000)
 
 
 #for checking functions
