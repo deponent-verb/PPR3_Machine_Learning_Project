@@ -19,7 +19,7 @@ model %>% compile(
 
 #setting up directories
 
-base_dir<- "~/work/PPR3/processed_data/images/"
+base_dir<- "~/work/PPR3/processed_data/binary_images"
 train_dir<-file.path(base_dir,"train")
 validation_dir<-file.path(base_dir,"validation")
 test_dir<-file.path(base_dir,"test")
@@ -47,7 +47,7 @@ validation_generator <- flow_images_from_directory(
 
 batch <- generator_next(train_generator)
 str(batch)
-#check 20 samples in each batch, 600*50 images, 1 channel
+#check 20 samples in each batch, 150*50 images, 1 channel
 
 #running ML
 
@@ -58,3 +58,6 @@ history <- model %>% fit_generator(
   validation_data = validation_generator,
   validation_steps = 50
 )
+
+save(history,file="~/work/PPR3/models/binary_history.Rdata")
+

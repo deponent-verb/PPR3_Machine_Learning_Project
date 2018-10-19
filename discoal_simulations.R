@@ -13,9 +13,10 @@ r=4*Ne*recomb_rate*nSites
 sampleSize=50
 anc_samples=10
 #selection<-c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
-#selection<-c(0,0.001,0.01,0.1)
+selection<-c(0,0.001,0.01,0.1)
+#selection<-c(0.1)
 alpha<-c()
-selection<-10^seq(-2,-4,-0.2)
+#selection<-10^seq(-2,-4,-0.2)
 
 for(i in seq_along(selection)){
 #  print(selection[i])
@@ -73,7 +74,9 @@ mclapply(1:length(alpha), function(i){
 
 discoal_sim(s_coeff = 0,num_sim=10000)
 
-#discoal_sim(s_coeff = alpha[9], num_sim = 10)
+discoal_sim(s_coeff = alpha[10], num_sim = 10000)
+discoal_sim(s_coeff = alpha[9], num_sim = 10000)
+discoal_sim(s_coeff = alpha[11], num_sim = 10000)
 #for checking functions
 
 
