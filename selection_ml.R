@@ -1,4 +1,3 @@
-library(keras)
 library(rlist)
 library(phonTools)
 setwd("~/work/PPR3/data/")
@@ -38,6 +37,8 @@ for( s in 1:length(haplo_list_full[][])){
       haplo_padded[[s]][[i]]=rbind(haplo_list_full[[s]][[i]], zeros(x=num_pad,y=ncol(haplo_list_full[[s]][[i]])))
       print(s)
       print(i)
+    } else {
+      haplo_padded[[s]][[i]]=haplo_list_full[[s]][[i]]
     }
   }
 }
@@ -45,6 +46,9 @@ for( s in 1:length(haplo_list_full[][])){
 #saving object
 
 save(haplo_padded,file="~/work/PPR3/processed_data/padded_haplotypes.Rdata")
+
+
+
 
 #diagnosis
 

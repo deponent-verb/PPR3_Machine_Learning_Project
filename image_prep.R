@@ -1,7 +1,7 @@
 library(jpeg)
 
 #making the directories
-base_dir<-"~/work/PPR3/processed_data/images"
+base_dir<-"~/work/PPR3/processed_data/multinomial_images"
 train_dir<-file.path(base_dir,"train")
 validation_dir<-file.path(base_dir,"validation")
 test_dir<-file.path(base_dir,"test")
@@ -25,10 +25,10 @@ for (i in 1:length(selection)){
 
 #turning matrices into images
 
-test_size=100
-validation_size=100
+test_size=1000
+validation_size=1000
 
-setwd("~/work/PPR3/raw_data/")
+setwd("~/work/PPR3/raw_data/multinomial")
 
 make_image<-function(s){
   object<-paste0("discoal_sim_s=",s,".Rdata")
@@ -36,11 +36,11 @@ make_image<-function(s){
   for(i in 1:length(haplo_list)){
     m<-haplo_list[[i]]
     if (i<=test_size) {
-      name=paste("~/work/PPR3/processed_data/images/test/s=",s,"/","s=",s,"_",i,".JPEG",sep="")
+      name=paste("~/work/PPR3/processed_data/multinomial_images/test/s=",s,"/","s=",s,"_",i,".JPEG",sep="")
     } else if (i<=test_size+validation_size){
-        name=paste("~/work/PPR3/processed_data/images/validation/s=",s,"/","s=",s,"_",i,".JPEG",sep="")
+        name=paste("~/work/PPR3/processed_data/multinomial_images/validation/s=",s,"/","s=",s,"_",i,".JPEG",sep="")
       } else 
-        name=paste("~/work/PPR3/processed_data/images/train/s=",s,"/","s=",s,"_",i,".JPEG",sep="")
+        name=paste("~/work/PPR3/processed_data/multinomial_images/train/s=",s,"/","s=",s,"_",i,".JPEG",sep="")
     writeJPEG(m,name, quality=1)
   }  
 }
@@ -51,9 +51,10 @@ for(i in 1:length(selection)){
   make_image(selection[i])
 }
 
+
 ##Binary Case
 
-base_dir<-"~/work/PPR3/processed_data/binary_images"
+base_dir<-"~/work/PPR3/processed_data/binary_images/(0,0.001)"
 train_dir<-file.path(base_dir,"train")
 validation_dir<-file.path(base_dir,"validation")
 test_dir<-file.path(base_dir,"test")
@@ -84,7 +85,7 @@ validation_size=1000
 
 
 bin_make_selection_image<-function(){
-  base_name=paste0("~/work/PPR3/processed_data/binary_images/")
+  base_name=paste0("~/work/PPR3/processed_data/binary_images/(0,0.05)/")
   load(file="~/work/PPR3/raw_data/binary/selection.Rdata")
     for(i in 1:length(haplo_list)){
       m<-haplo_list[[i]]
@@ -99,6 +100,7 @@ bin_make_selection_image<-function(){
 }
 
 bin_make_neutral_image<-function() {
+  base_name=paste0("~/work/PPR3/processed_data/binary_images/(0,0.05)/")
   load(file="~/work/PPR3/raw_data/binary/neutral.Rdata")
   for(i in 1:length(haplo_list)){
     m<-haplo_list[[i]]
@@ -112,8 +114,11 @@ bin_make_neutral_image<-function() {
   }
 }
 
-
 bin_make_selection_image()
+
+
+
+
 bin_make_neutral_image()
 
 

@@ -1,7 +1,7 @@
 library(phonTools)
 library(MASS)
 library(parallel)
-setwd("~/discoal/")
+setwd("~/work/PPR3/")
 
 #set up discoal parameters
 mu=1.5e-8
@@ -12,31 +12,30 @@ theta=4*Ne*mu*nSites
 r=4*Ne*recomb_rate*nSites
 sampleSize=50
 anc_samples=10
-
+selection<-c(0,0.001,0.005,0.01,0.02,0.05,0.1,0.2,0.5)
 alpha<-c()
 
-# for(i in seq_along(selection)){
-#   #  print(selection[i])
-#   alpha<-c(alpha, 2*Ne*selection[i])
-# }
+for(i in seq_along(selection)){
+  #  print(selection[i])
+  alpha<-c(alpha, 2*Ne*selection[i])
+}
 
 nrep=1
 nSites<-format(nSites, scientific = FALSE)
 
 ######simulation code starts here!
 
-random_discoal_sim <- function (num_sim){
+discoal_sim <- function (s_coeff,num_sim){
   
-  haplo_list = mclapply(1:num_sim, function(k){
+  start.time <- Sys.time()
+  
+  haplo_list = lapply(1:num_sim, function(k){
     
     selection_start=runif(1,min=0,max=0.2)
-    #selection_start=0.2
-    s_coeff=runif(1,min=0,max=0.0001)
-    alpha=2*Ne*s_coeff
     
     cmd = paste("~/discoal/discoal", sampleSize, nrep, nSites, "-t", theta, "-r", r, "-A",+
                   anc_samples, 0 , 0.05, "-A", anc_samples, 0 , 0.1, "-A", anc_samples, 0 , 0.15, "-A", anc_samples, 0 , 0.20,
-                "-ws", selection_start, "-x", 0.5 , "-a", alpha )
+                "-ws", selection_start, "-x", 0.5 , "-a", s_coeff )
     
     while(TRUE) {
       sim=system(cmd, intern=TRUE)
@@ -53,8 +52,19 @@ random_discoal_sim <- function (num_sim){
   })
   
   #save as R object
-  object_name=paste0("~/work/PPR3/raw_data/binary/selection_rand_0,0.0001.Rdata")
+  s=s_coeff/(2*Ne)
+  object_name=paste0("./discoal_sim_s=", s,".Rdata")
   save(haplo_list,file=object_name)
+  
 }
 
-random_discoal_sim(10000)
+#Running simulations
+
+mclapply(1:length(alpha), function(i) {
+  start.time<-Sys.time()
+  discoal_sim(s_coeff = alpha[i],num_sim = 10)
+  end.time<-Sys.time()
+  total.time<-end.time-start.time
+  progress=paste("Completed sim ", i , " in ", total.time)
+  print(progress)
+}, mc.cores=8)

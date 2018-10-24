@@ -71,7 +71,7 @@ model<-load_model_hdf5("~/work/PPR3/models/test.h5")
 
 #predicting images
 
-img_path<- "~/work/PPR3/processed_data/multinomial_images/validation/s=0.000398107170553497/s=0.000398107170553497_1001.JPEG"
+img_path<- "~/work/PPR3/processed_data/multinomial_images/validation/s=0.01/s=0.01_1001.JPEG"
 #img<-image_load(img_path,grayscale=TRUE)
 # multi_history %>% predict(img)
 
@@ -109,10 +109,9 @@ get_predictions<-function(s_coeff, selection_vec){
   return(result_vector)
 }
 
-selection<-10^seq(-2,-4,-0.2)
-short_selection<-c(0.0100000000,0.0010000000,0.00158489319246111,0.00251188643150958,s=0.00398107170553497,s=0.000398107170553497,s=0.00630957344480193,s=0.000630957344480193)
 
-res = lapply(short_selection, function(x) get_predictions(s_coeff=x, short_selection))
+
+res = lapply(selection, function(x) get_predictions(s_coeff=x, selection))
 res = do.call(rbind, res)
 
 
